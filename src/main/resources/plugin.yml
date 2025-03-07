@@ -1,0 +1,5 @@
+name: sticks
+version: '1.0'
+main: ru.sema1ary.sticks.Sticks
+api-version: '1.20'
+authors: [sema1ary]

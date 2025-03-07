@@ -1,0 +1,15 @@
+configuration:
+  sql-driver: 'mariadb' # MariaDB, MySQL, PostgreSQL
+  sql-use: false
+  sql-host: 'localhost:3306'
+  sql-database: 'database'
+  sql-user: 'user'
+  sql-password: 'password'
+
+  reload-message: '<green>Плагин перезапущен.'
+
+  enabled-sticks-message: '<green>Вы успешно включили sticks.'
+  disabled-sticks-message: '<green>Вы успешно выключили sticks.'
+
+  target-enabled-sticks-message: '<green>Вы успешно включили игроку {player} sticks.'
+  target-disabled-sticks-message: '<green>Вы успешно выключили игроку {player} sticks.'
