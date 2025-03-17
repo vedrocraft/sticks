@@ -1,29 +1,25 @@
 package ru.sema1ary.sticks;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import lombok.SneakyThrows;
 import org.bukkit.plugin.java.JavaPlugin;
-import ormlite.ConnectionSourceUtil;
 import ru.sema1ary.sticks.command.SticksCommand;
 import ru.sema1ary.sticks.listener.InteractListener;
 import ru.sema1ary.sticks.listener.PreJoinListener;
 import ru.sema1ary.sticks.model.SticksUser;
 import ru.sema1ary.sticks.service.SticksUserService;
 import ru.sema1ary.sticks.service.impl.SticksUserServiceImpl;
-import ru.vidoskim.bukkit.service.ConfigService;
-import ru.vidoskim.bukkit.service.impl.ConfigServiceImpl;
-import ru.vidoskim.bukkit.util.LiteCommandUtil;
-import service.ServiceManager;
+import ru.sema1ary.vedrocraftapi.BaseCommons;
+import ru.sema1ary.vedrocraftapi.command.LiteCommandBuilder;
+import ru.sema1ary.vedrocraftapi.ormlite.ConnectionSourceUtil;
+import ru.sema1ary.vedrocraftapi.service.ConfigService;
+import ru.sema1ary.vedrocraftapi.service.ServiceManager;
+import ru.sema1ary.vedrocraftapi.service.impl.ConfigServiceImpl;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public final class Sticks extends JavaPlugin {
-    private JdbcPooledConnectionSource connectionSource;
-
+public final class Sticks extends JavaPlugin implements BaseCommons {
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -34,10 +30,12 @@ public final class Sticks extends JavaPlugin {
 
         ServiceManager.registerService(SticksUserService.class, new SticksUserServiceImpl(getDao(SticksUser.class)));
 
-        new LiteCommandUtil().create("sticks", new SticksCommand(
-                ServiceManager.getService(ConfigService.class),
-                ServiceManager.getService(SticksUserService.class)
-        ));
+        LiteCommandBuilder.builder()
+                .commands(new SticksCommand(
+                        ServiceManager.getService(ConfigService.class),
+                        ServiceManager.getService(SticksUserService.class)
+                ))
+                .build();
 
         getServer().getPluginManager().registerEvents(new PreJoinListener(
                 ServiceManager.getService(SticksUserService.class)), this);
@@ -47,14 +45,13 @@ public final class Sticks extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        ConnectionSourceUtil.closeConnection(true, connectionSource);
+        ConnectionSourceUtil.closeConnection(true);
     }
 
     @SneakyThrows
     private void initConnectionSource() {
         if(ServiceManager.getService(ConfigService.class).get("sql-use")) {
-            connectionSource = ConnectionSourceUtil.connectSQLDatabase(
-                    ServiceManager.getService(ConfigService.class).get("sql-driver"),
+            ConnectionSourceUtil.connectSQL(
                     ServiceManager.getService(ConfigService.class).get("sql-host"),
                     ServiceManager.getService(ConfigService.class).get("sql-database"),
                     ServiceManager.getService(ConfigService.class).get("sql-user"),
@@ -68,12 +65,6 @@ public final class Sticks extends JavaPlugin {
             return;
         }
 
-        connectionSource = ConnectionSourceUtil.connectNoSQLDatabase("sqlite",
-                databaseFilePath.toString(), SticksUser.class);
-    }
-
-    @SuppressWarnings("all")
-    private <D extends Dao<T, ?>, T> D getDao(Class<T> daoClass) {
-        return DaoManager.lookupDao(connectionSource, daoClass);
+        ConnectionSourceUtil.connectNoSQLDatabase(databaseFilePath.toString(), SticksUser.class);
     }
 }

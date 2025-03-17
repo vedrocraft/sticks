@@ -7,17 +7,16 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.sema1ary.sticks.model.SticksUser;
 import ru.sema1ary.sticks.service.SticksUserService;
-import ru.vidoskim.bukkit.service.ConfigService;
+import ru.sema1ary.vedrocraftapi.player.PlayerUtil;
+import ru.sema1ary.vedrocraftapi.service.ConfigService;
 
 @RequiredArgsConstructor
 @Command(name = "sticks")
 public class SticksCommand {
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final ConfigService configService;
     private final SticksUserService userService;
 
@@ -26,7 +25,7 @@ public class SticksCommand {
     @Permission("sticks.reload")
     void reload (@Context CommandSender sender) {
         configService.reload();
-        sender.sendMessage(miniMessage.deserialize(configService.get("reload-message")));
+        PlayerUtil.sendMessage(sender, (String) configService.get("reload-message"));
     }
 
     @Async
@@ -37,10 +36,10 @@ public class SticksCommand {
 
         if(user.isSticksEnabled()) {
             user.setSticksEnabled(false);
-            sender.sendMessage(miniMessage.deserialize(configService.get("disabled-sticks-message")));
+            PlayerUtil.sendMessage(sender, (String) configService.get("disabled-sticks-message"));
         } else {
             user.setSticksEnabled(true);
-            sender.sendMessage(miniMessage.deserialize(configService.get("enabled-sticks-message")));
+            PlayerUtil.sendMessage(sender, (String) configService.get("enabled-sticks-message"));
         }
 
         userService.save(user);
@@ -54,13 +53,14 @@ public class SticksCommand {
 
         if(user.isSticksEnabled()) {
             user.setSticksEnabled(false);
-            sender.sendMessage(miniMessage.deserialize(
-                    ((String) configService.get("target-disabled-sticks-message")).replace("{player}", target.getName())
+
+            PlayerUtil.sendMessage(sender,
+                    ((String) configService.get("enabled-sticks-message")).replace("{player}", target.getName()
             ));
         } else {
             user.setSticksEnabled(true);
-            sender.sendMessage(miniMessage.deserialize(
-                    ((String) configService.get("target-enabled-sticks-message")).replace("{player}", target.getName())
+            PlayerUtil.sendMessage(sender,
+                    ((String) configService.get("target-enabled-sticks-message")).replace("{player}", target.getName()
             ));
         }
 
