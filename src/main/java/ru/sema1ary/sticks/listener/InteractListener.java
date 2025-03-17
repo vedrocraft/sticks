@@ -19,7 +19,6 @@ public class InteractListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInteract(PlayerInteractAtEntityEvent event) {
-        System.out.println("test");
         if(!(event.getRightClicked() instanceof Player player)) {
             return;
         }
@@ -34,7 +33,7 @@ public class InteractListener implements Listener {
             return;
         }
 
-        Vector vector = player.getLocation().getDirection().multiply(-0.5).setY(0.5);
+        Vector vector = event.getPlayer().getLocation().getDirection().multiply(0.5).setY(0.2);
         player.setVelocity(vector);
 
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
