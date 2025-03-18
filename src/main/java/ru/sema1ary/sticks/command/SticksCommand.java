@@ -30,7 +30,6 @@ public class SticksCommand {
 
     @Async
     @Execute
-    @Permission("sticks.change")
     void change(@Context Player sender) {
         SticksUser user = userService.getUser(sender.getName());
 
