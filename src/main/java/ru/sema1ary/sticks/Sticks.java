@@ -32,15 +32,15 @@ public final class Sticks extends JavaPlugin implements BaseCommons {
 
         LiteCommandBuilder.builder()
                 .commands(new SticksCommand(
-                        ServiceManager.getService(ConfigService.class),
-                        ServiceManager.getService(SticksUserService.class)
+                        getService(ConfigService.class),
+                        getService(SticksUserService.class)
                 ))
                 .build();
 
         getServer().getPluginManager().registerEvents(new PreJoinListener(
-                ServiceManager.getService(SticksUserService.class)), this);
+                getService(SticksUserService.class)), this);
         getServer().getPluginManager().registerEvents(new InteractListener(
-                ServiceManager.getService(SticksUserService.class)), this);
+                getService(SticksUserService.class)), this);
     }
 
     @Override
@@ -50,12 +50,12 @@ public final class Sticks extends JavaPlugin implements BaseCommons {
 
     @SneakyThrows
     private void initConnectionSource() {
-        if(ServiceManager.getService(ConfigService.class).get("sql-use")) {
+        if(getService(ConfigService.class).get("sql-use")) {
             ConnectionSourceUtil.connectSQL(
-                    ServiceManager.getService(ConfigService.class).get("sql-host"),
-                    ServiceManager.getService(ConfigService.class).get("sql-database"),
-                    ServiceManager.getService(ConfigService.class).get("sql-user"),
-                    ServiceManager.getService(ConfigService.class).get("sql-password"),
+                    getService(ConfigService.class).get("sql-host"),
+                    getService(ConfigService.class).get("sql-database"),
+                    getService(ConfigService.class).get("sql-user"),
+                    getService(ConfigService.class).get("sql-password"),
                     SticksUser.class);
             return;
         }
