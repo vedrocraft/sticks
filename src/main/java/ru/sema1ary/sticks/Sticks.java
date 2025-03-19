@@ -45,5 +45,5 @@ public final class Sticks extends JavaPlugin implements BaseCommons {
     @Override
     public void onDisable() {
         ConnectionSourceUtil.closeConnection(true);
-
+    }
 }
